@@ -15,8 +15,11 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'email', 'password',
+    // protected $fillable = [
+    //     'name', 'email', 'password',
+    // ];
+    protected $guarded = [
+
     ];
 
     /**
@@ -34,5 +37,27 @@ class User extends Authenticatable
 
     public function role() {
         return $this->belongsTo(Role::class);
+    }
+
+    public function get($pageSize = 3) {
+        return User::paginate($pageSize);
+    }
+
+    public function doDelete() {
+        $this->delete();
+    }
+
+    public function doCreate($user) {
+        $user['password'] = bcrypt($user['password']);
+        $this->create($user);
+    }
+
+    public function doUpdate($user) {
+        if($user['password']) {
+            $user['password'] = bcrypt($user['password']);
+        } else {
+            unset($user['password']);
+        }
+        $this->update($user);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Post;
 
 class HomeController extends Controller
 {
@@ -13,16 +14,15 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
     }
 
     /**
-     * Show the application dashboard.
+     * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Post $post)
     {
-        return view('home');
+        return view('blogs.list', ['posts' => $post->get()]);
     }
 }

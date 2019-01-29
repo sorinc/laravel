@@ -4,17 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use Illuminate\Http\Request;
+use App\Http\Requests\PostStoreRequest;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Post $post)
     {
-        //
+        return view('posts.list', ['posts' => $post->get()]);
     }
 
     /**
@@ -24,7 +30,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -33,9 +39,11 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostStoreRequest $request, Post $post)
     {
-        //
+        $validated = $request->validated();
+        $post->doCreate($validated);
+        return redirect('posts');
     }
 
     /**
@@ -46,7 +54,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('posts.show', ['post' => $post]);
     }
 
     /**
@@ -57,7 +65,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit',[
+            'post' => $post,
+        ]);
     }
 
     /**
@@ -67,9 +77,11 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostStoreRequest $request, Post $post)
     {
-        //
+        $validated = $request->validated();
+        $post->doUpdate($validated);
+        return back();
     }
 
     /**
@@ -80,6 +92,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->doDelete();
+        return back();
     }
 }
